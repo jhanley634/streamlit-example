@@ -1,0 +1,10 @@
+
+name: streamlit-example
+
+channels:
+- conda-forge
+
+dependencies:
+- altair
+- pandas
+- streamlit
