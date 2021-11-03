@@ -11,7 +11,6 @@ dependencies:
 - numpy >= 1.21.3
 - pandas >= 1.2.5
 - pillow >= 8.3.2
-- py-opencv >= 4.5.3
 - python >= 3.9.7
 - ruamel.yaml >= 0.17.16
 - streamlit >= 1.1.0
