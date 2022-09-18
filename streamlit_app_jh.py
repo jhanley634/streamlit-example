@@ -1,6 +1,9 @@
+
 from collections import namedtuple
-import altair as alt
+from time import time
 import math
+
+import altair as alt
 import pandas as pd
 import streamlit as st
 
@@ -15,16 +18,14 @@ forums](https://discuss.streamlit.io).
 In the meantime, below is an example of what you can do with just a few lines of code:
 """
 
+Point = namedtuple('Point', 'x y')
 
-with st.echo(code_location='below'):
-    total_points = st.slider("Number of points in spiral", 1, 5000, 2000)
-    num_turns = st.slider("Number of turns in spiral", 1, 100, 9)
 
-    Point = namedtuple('Point', 'x y')
-    data = []
-
+@st.cache
+def _get_spiral(total_points, num_turns):
     points_per_turn = total_points / num_turns
-
+    t0 = time()
+    data = []
     for curr_point_num in range(total_points):
         curr_turn, i = divmod(curr_point_num, points_per_turn)
         angle = (curr_turn + 1) * 2 * math.pi * i / points_per_turn
@@ -33,6 +34,18 @@ with st.echo(code_location='below'):
         y = radius * math.sin(angle)
         data.append(Point(x, y))
 
-    st.altair_chart(alt.Chart(pd.DataFrame(data), height=500, width=500)
-        .mark_circle(color='#0068c9', opacity=0.5)
-        .encode(x='x:Q', y='y:Q'))
+    print(f'{total_points}   {num_turns}   {time() - t0:.03f} sec.')
+    return pd.DataFrame(data)
+
+
+def display_spiral():
+    total_points = st.slider("Number of points in spiral", 1, 5000, 2000)
+    num_turns = st.slider("Number of turns in spiral", 1, 100, 9)
+
+    st.altair_chart(alt.Chart(_get_spiral(total_points, num_turns), height=500, width=500)
+                    .mark_circle(color='#0068c9', opacity=0.5)
+                    .encode(x='x:Q', y='y:Q'))
+
+
+if __name__ == '__main__':
+    display_spiral()
